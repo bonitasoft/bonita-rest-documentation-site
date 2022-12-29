@@ -1,0 +1,17 @@
+{
+  "name": "bonita-documentation-site",
+  "version": "0.0.0",
+  "private": true,
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "clean": "rimraf build .cache"
+  },
+  "devDependencies": {
+    "follow-redirects": "^1.15.2",
+    "fs-extra": "~11.1.0",
+    "handlebars": "^4.7.7",
+    "js-yaml": "~4.1.0",
+    "rimraf": "~3.0.2",
+    "unzipper": "^0.10.11"
+  }
+}
