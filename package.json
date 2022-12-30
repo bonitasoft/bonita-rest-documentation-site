@@ -1,8 +1,11 @@
 {
-  "name": "bonita-documentation-site",
-  "version": "0.0.0",
+  "name": "bonita-rest-documentation-site",
+  "version": "0.0.1",
   "private": true,
   "license": "GPL-2.0-or-later",
+  "bin": {
+    "restdoc-site": "./scripts/restdoc-site.js"
+  },
   "scripts": {
     "clean": "rimraf build .cache"
   },
@@ -12,6 +15,8 @@
     "handlebars": "^4.7.7",
     "js-yaml": "~4.1.0",
     "rimraf": "~3.0.2",
-    "unzipper": "^0.10.11"
+    "unzipper": "^0.10.11",
+    "winston": "^3.8.2",
+    "yargs": "^17.6.2"
   }
 }
