@@ -5,24 +5,17 @@
 const {hideBin} = require('yargs/helpers')
 const logger = require('./logger.js');
 
-// ===============================
-// ========== Main ===============
-// ===============================
-
 require('yargs/yargs')(hideBin(process.argv))
     .scriptName("restdoc-site")
-    .strict()
-    .strictOptions()
-    .strictCommands()
+    .strictOptions(false)
     .usage('Usage: $0 <command> [options]')
     .example([
         ['$0 clean', 'Clean output dir'],
-        ["$0 build -s http://localhost -lt 0.0.11 -r 0.0.10 0.0.11", "Build static documentation site to deploy for Bonita OpenAPI released version 0.0.11."],
+        ["$0 build -s http://localhost -l 0.0.11 -r 0.0.10 0.0.11", "Build static documentation site to deploy for Bonita OpenAPI released version 0.0.11."],
         ["$0 preview -s http://localhost -r https://github.com/bonitasoft/bonita-openapi -b feat/remove-tenant", "Build static documentation site preview for branch \"feat/remove-tenant\" of Bonita OpenAPI project"]
     ])
     .config()
-    .option(
-        {
+    .option({
             "d": {
                 alias: "sourceDir",
                 describe: "The path to source directory.",
