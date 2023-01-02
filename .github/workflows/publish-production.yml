@@ -29,6 +29,10 @@ jobs:
         uses: ./.github/actions/build-setup
       - name: Build site
         run: node cli/restdoc-site.js build -r ${{ inputs.releases }} -l ${{ inputs.latest }}
+      - name: Create deploy message
+        if: github.event_name == 'workflow_dispatch'
+        run:
+          echo "deploy_message=Deploy ${{github.sha}} from manual request" >> $GITHUB_ENV
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
