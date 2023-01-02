@@ -141,7 +141,7 @@ const cli = require('yargs/yargs')(hideBin(process.argv))
         "o": {
             alias: "outputDir",
             describe: "The path to output directory.",
-            default: './build',
+            default: '../build',
             type: "string",
             nargs: 1,
         }
