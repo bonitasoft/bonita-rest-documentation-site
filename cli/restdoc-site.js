@@ -11,7 +11,7 @@ const Handlebars = require('handlebars');
 
 const {hideBin} = require('yargs/helpers')
 
-const sourceDirectory = './src';
+const sourceDirectory = './site';
 const templatePath = `${sourceDirectory}/templates`
 const staticFilePath = `${sourceDirectory}/files`
 const vars = JSON.parse(fs.readFileSync(`${sourceDirectory}/vars.json`, {encoding: 'utf8'}).toString())
