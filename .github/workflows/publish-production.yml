@@ -30,6 +30,7 @@ jobs:
           publish-dir: './build/'
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: ${{ env.deploy_message }}
           netlify-config-path: ./build/netlify.toml
           # no comment, we only publish to production, github commit status and environment are set correctly
           enable-pull-request-comment: false
