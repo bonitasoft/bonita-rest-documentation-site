@@ -5,23 +5,6 @@ concurrency: ${{ github.workflow }}
 
 on:
   workflow_dispatch:
-    inputs:
-      releases:
-        description: 'List of bonita open Api to deploy'
-        default: 0.0.11
-        required: true
-      latest:
-        description: 'Latest release'
-        default: 0.0.11
-        required: false
-  push:
-    branches:
-      - master
-    paths:
-      - '.github/workflows/publish-production.yml'
-      - 'resources/**/*'
-      - 'site/**/*'
-      - 'cli/**/*'
 
 permissions:
   # netlify: notify deployments
@@ -36,13 +19,18 @@ jobs:
       - name: Build Setup
         uses: ./.github/actions/build-setup
       - name: Build site
-        run: node cli/restdoc-site.js' build -r ${{ inputs.releases }} -l ${{ inputs.latest }}
+        run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build
+      - name: Create deploy message
+        if: github.event_name == 'workflow_dispatch'
+        run:
+          echo "deploy_message=Deploy ${{github.sha}} from manual request" >> $GITHUB_ENV
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: './build/'
           production-deploy: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: ${{ env.deploy_message }}
           netlify-config-path: ./build/netlify.toml
           # no comment, we only publish to production, github commit status and environment are set correctly
           enable-pull-request-comment: false

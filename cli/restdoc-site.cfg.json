@@ -1,5 +1,6 @@
 {
   "sourceDir": "./site",
   "downloadUrlTemplate": "https://github.com/bonitasoft/bonita-openapi/releases/download/${releaseVersion}/bonita-openapi-${releaseVersion}.zip",
-  "x" : "y"
+  "releases" : "0.0.11",
+  "latest" : "0.0.11"
 }
