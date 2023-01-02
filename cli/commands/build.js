@@ -85,8 +85,10 @@ exports.builder = (yargs) => {
 exports.handler = async (argv) => {
     const {sourceDir, outputDir, siteUrl, latest, releases, downloadUrlTemplate} = argv;
 
-    logger.info(`Hello ${sourceDir} !`)
-
+    const sourceDirExists = await fse.pathExists(sourceDir)
+    if (!sourceDirExists) {
+        throw Error(`Source site directory "${sourceDir}" does not exists !`)
+    }
 
     let latestRelease = latest
     if (releases.length === 1) {
