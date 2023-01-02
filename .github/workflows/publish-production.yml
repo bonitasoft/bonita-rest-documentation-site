@@ -14,14 +14,6 @@ on:
         description: 'Latest release'
         default: 0.0.11
         required: false
-  push:
-    branches:
-      - master
-    paths:
-      - '.github/workflows/publish-production.yml'
-      - 'resources/**/*'
-      - 'site/**/*'
-      - 'cli/**/*'
 
 permissions:
   # netlify: notify deployments
@@ -36,7 +28,7 @@ jobs:
       - name: Build Setup
         uses: ./.github/actions/build-setup
       - name: Build site
-        run: node cli/restdoc-site.js' build -r ${{ inputs.releases }} -l ${{ inputs.latest }}
+        run: node cli/restdoc-site.js build -r ${{ inputs.releases }} -l ${{ inputs.latest}}
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
