@@ -5,15 +5,6 @@ concurrency: ${{ github.workflow }}
 
 on:
   workflow_dispatch:
-    inputs:
-      releases:
-        description: 'List of bonita open Api to deploy'
-        default: 0.0.11
-        required: true
-      latest:
-        description: 'Latest release'
-        default: 0.0.11
-        required: false
 
 permissions:
   # netlify: notify deployments
@@ -28,7 +19,7 @@ jobs:
       - name: Build Setup
         uses: ./.github/actions/build-setup
       - name: Build site
-        run: node cli/restdoc-site.js build -r ${{ inputs.releases }} -l ${{ inputs.latest }}
+        run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build
       - name: Create deploy message
         if: github.event_name == 'workflow_dispatch'
         run:
