@@ -1,15 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>{{siteUrl}}/latest</title>
+    <link rel="canonical" href="{{siteUrl}}/latest"/>
+    <meta name="robots" content="noindex">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="refresh" content="0; url={{siteUrl}}/latest"/>
     <meta charset="UTF-8">
-    <meta http-equiv="Refresh"
-          content="0; url='{{siteUrl}}/latest'"/>
-    <title>Bonita OpenAPI Documentation</title>
 </head>
 <body>
-<h1>Bonita OpenAPI Documentation</h1>
-<p>If you were not automatically redirected to the latest version of Bonita OpenAPI
-    documentation, please follow this <a href="{{siteUrl}}/latest">link</a>
-    !</p>
+    <h1>Bonita OpenAPI Documentation</h1>
+    <p>If you were not automatically redirected to the latest version of Bonita OpenAPI
+        documentation, please follow this <a href="{{siteUrl}}/latest">link</a>!
+    </p>
+    <ul>
+        {{#each releases}}
+        <li>Version <a href="{{../siteUrl}}/{{this}}/index.html">{{this}}</a></li>
+        {{/each}}
+    </ul>
+    {{#if site.ga_key}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{site.ga_key}}"></script>
+    <script>function gtag() { dataLayer.push(arguments) }; window.dataLayer = window.dataLayer || []; gtag('js', new Date()); gtag('config', '{{site.ga_key}}')</script>
+    {{/if}}
 </body>
 </html>
