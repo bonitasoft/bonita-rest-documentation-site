@@ -9,25 +9,7 @@ const https = require('follow-redirects').https;// or 'https' for https:// URLs
 const unzipper = require("unzipper");
 const Handlebars = require('handlebars');
 
-const winston = require('winston');
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.simple(),
-    transports: [
-        // new winston.transports.File({
-        //     filename: 'restdoc-site.log', level: 'info', format: winston.format.combine(
-        //         winston.format.timestamp(),
-        //         winston.format.logstash()
-        //     )
-        // }),
-        new winston.transports.Console({
-            format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.simple(),
-            )
-        })
-    ]
-});
+const logger = require('../logger.js');
 
 async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion) {
     logger.debug(` - Release to deploy ${releaseVersion}`);

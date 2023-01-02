@@ -2,6 +2,8 @@
 
 "use strict";
 
+const logger = require('../logger.js');
+
 exports.command = 'preview'
 exports.desc = 'Build static documentation site preview for a branch of Bonita OpenAPI project'
 exports.builder = (yargs) => {
@@ -22,4 +24,5 @@ exports.builder = (yargs) => {
     })
 }
 exports.handler = (argv) => {
+    logger.warn("Not implemented yet !")
 }

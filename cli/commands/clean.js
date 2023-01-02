@@ -3,6 +3,7 @@
 "use strict";
 
 const fs = require('fs');
+const logger = require('../logger.js');
 
 exports.command = "clean"
 exports.desc = "clean output directory"
