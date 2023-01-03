@@ -6,6 +6,8 @@ on:
 jobs:
   deployPreview:
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write # surge-preview creates or updates PR comments about the deployment status
     steps:
       - name: Checkout
         uses: actions/checkout@v3
