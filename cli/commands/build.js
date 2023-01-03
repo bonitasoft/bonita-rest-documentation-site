@@ -79,24 +79,30 @@ exports.builder = (yargs) => {
             type: "string",
             nargs: 1
         },
+    }).check(async (argv) => {
+        const sourceDir = argv.sourceDir
+        const sourceDirExists = await fse.pathExists(sourceDir)
+        if (!sourceDirExists) {
+            throw Error(`Source site directory "${sourceDir}" does not exists !`)
+        } else {
+            return true // tell Yargs that the arguments passed the check
+        }
+    }).check((argv) => {
+        const releases = argv.releases
+        if (releases.length === 1) {
+            argv.latest = releases[0]
+        }
+        const latest = argv.latest
+        if (!releases.includes(latest)) {
+            throw Error(`Latest release "${latest}" is not listed in the releases to deploy !`)
+        } else {
+            return true // tell Yargs that the arguments passed the check
+        }
     })
 }
 
 exports.handler = async (argv) => {
     const {sourceDir, outputDir, siteUrl, latest, releases, downloadUrlTemplate} = argv;
-
-    const sourceDirExists = await fse.pathExists(sourceDir)
-    if (!sourceDirExists) {
-        throw Error(`Source site directory "${sourceDir}" does not exists !`)
-    }
-
-    let latestRelease = latest
-    if (releases.length === 1) {
-        latestRelease = releases[0]
-    }
-    if (!releases.includes(latestRelease)) {
-        throw Error(`Latest release "${latestRelease}" is not listed in the releases to deploy !`)
-    }
 
     logger.info('Building REST documentation site');
 
@@ -151,3 +157,4 @@ exports.handler = async (argv) => {
     }
     logger.info(`REST documentation generated in ${outputDir}`);
 }
+
