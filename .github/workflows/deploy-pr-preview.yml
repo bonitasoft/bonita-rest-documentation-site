@@ -13,13 +13,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Build Setup
         uses: ./.github/actions/build-setup
-      - name: Build site
-        run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build
       - uses: bonitasoft/actions/packages/surge-preview-tools@v2
         if: ${{ success() && github.event_name == 'pull_request' }}
         id: surge-preview-tools
         with:
           surge-token: ${{ secrets.SURGE_TOKEN_DOC }}
+      - name: Build site
+        run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build -s ${{steps.surge-preview-tools.outputs.preview-url}}
       - name: Delete useless files
         run: |
           rm build/robots.txt
