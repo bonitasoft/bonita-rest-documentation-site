@@ -5,6 +5,7 @@
     <title>Page Not Found | Bonita REST Documentation</title>
     <style>
         @import url(//fonts.googleapis.com/css?family=Roboto:400,700);
+
         body {
             margin: 0;
             padding: 0;
@@ -12,29 +13,62 @@
             font-size: 14px;
             color: #333;
         }
+
+        .pagenotfound {
+            text-align: center;
+            margin-bottom: 100px;
+            color: #dd042b;
+            font-size: 24px;
+        }
+        .paragraph{
+            text-align: center;
+            line-height: 1.6;
+        }
+        .header{
+            background-color: #19465f;
+            height: 63px;
+        }
+        .bonita-logo {
+            background: url(images/bonitasoft-logo.svg) no-repeat 50% 45%;
+            background-size: contain;
+            display: block;
+            height: 3.5rem;
+            padding: 0;
+            width: 9.5rem;
+        }
     </style>
 </head>
 <body>
-<div style="background-color:#003355" ><a href="https://documentation.bonitasoft.com/bonita/latest/rest-api-overview" ><img src="images/logo_bonitasoft_white.png" alt="Bonita API" ></a></div>
+<div class="header"><a class="bonita-logo"
+        href="https://documentation.bonitasoft.com/bonita/latest/rest-api-overview"></a>
+</div>
+
 <div style="width: 80%; margin: auto">
-    <div style="text-align: center">
+    <div class="pagenotfound">
         <img src="images/404-error-bonita-flavor.png" alt="404 drawing" style="height: 300px">
         <p>OOPS, LOOKS LIKE THE PAGE CANNOT BE FOUND...</p>
+    </div>
+    <div class="paragraph">
         <p>If you arrived at this page by clicking on a link, please notify the owner of
             the site that the link is broken.<br>
             If you typed the URL of this page manually, please double-check that you
             entered the address correctly.</p>
+        <h2>Available documentations</h2>
+        <ul>
+            {{#each releases}}
+                <li>Version <a href="{{../siteUrl}}/{{this}}/index.html">{{this}}</a></li>
+            {{/each}}
+        </ul>
     </div>
-    <h2>Available documentations</h2>
-    <ul>
-        {{#each releases}}
-            <li>Version <a href="{{../siteUrl}}/{{this}}/index.html">{{this}}</a></li>
-        {{/each}}
-    </ul>
+
 </div>
 {{#if site.ga_key}}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{site.ga_key}}"></script>
-    <script>function gtag() { dataLayer.push(arguments) }; window.dataLayer = window.dataLayer || []; gtag('js', new Date()); gtag('config', '{{site.ga_key}}')</script>
+    <script>function gtag() {
+        dataLayer.push(arguments)
+    };window.dataLayer = window.dataLayer || [];
+    gtag('js', new Date());
+    gtag('config', '{{site.ga_key}}')</script>
 {{/if}}
 </body>
 </html>
