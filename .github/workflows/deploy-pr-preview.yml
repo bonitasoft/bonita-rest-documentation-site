@@ -1,0 +1,36 @@
+name: Deploy PR Preview
+
+on:
+  pull_request:
+    branches: [ master ]
+jobs:
+  deployPreview:
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write # surge-preview creates or updates PR comments about the deployment status
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Setup
+        uses: ./.github/actions/build-setup
+      - uses: bonitasoft/actions/packages/surge-preview-tools@v2
+        if: ${{ success() && github.event_name == 'pull_request' }}
+        id: surge-preview-tools
+        with:
+          surge-token: ${{ secrets.SURGE_TOKEN_DOC }}
+      - name: Build site
+        run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build -s ${{steps.surge-preview-tools.outputs.preview-url}}
+      - name: Delete useless files
+        run: |
+          rm build/robots.txt
+          rm build/netlify.toml
+      - name: Publish preview
+        uses: afc163/surge-preview@v1
+        if: steps.surge-preview-tools.outputs.can-run-surge-command == 'true'
+        with:
+          surge_token: ${{ secrets.SURGE_TOKEN_DOC }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dist: build
+          failOnError: true
+          teardown: true
+          build: echo "site already built"
