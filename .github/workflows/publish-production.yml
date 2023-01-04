@@ -5,6 +5,12 @@ concurrency: ${{ github.workflow }}
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths:
+      - 'cli/**/*'
+      - 'site/**/*'
+      - '.github/workflows/publish-production.yml'
 
 permissions:
   # netlify: notify deployments
@@ -24,6 +30,10 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run:
           echo "deploy_message=Deploy ${{github.sha}} from manual request" >> $GITHUB_ENV
+      - name: Create deploy message if push or pull request
+        if: github.event_name == 'push'
+        run:
+          echo "deploy_message=Deploy ${{ github.sha }}" >> $GITHUB_ENV
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
@@ -39,49 +49,49 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 10
-#      - name: Send message to Slack channel
-#        if: failure()
-#        uses: slackapi/slack-github-action@v1.23.0
-#        with:
-#          channel-id: 'CCQGMR4ES'
-#          payload: |
-#            {
-#              "blocks": [
-#                {
-#                  "type": "section",
-#                  "text": {
-#                    "type": "mrkdwn",
-#                    "text": ":red_circle:  Publish rest api documentation in production failed. \n \n  @channel *We need someone* !"
-#                  }
-#                },
-#                {
-#                  "type": "section",
-#                  "text": {
-#                    "type": "mrkdwn",
-#                    "text": "More details about the error <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}?check_suite_focus=true| here>"
-#                  }
-#                },
-#                {
-#                  "type": "divider"
-#                },
-#                {
-#                  "type": "section",
-#                  "text": {
-#                    "type": "mrkdwn",
-#                    "text": "_C’est pas grave de faire des erreurs. Par contre il ne faut pas les merger!_ :imp:"
-#                  }
-#                },
-#                {
-#                  "type": "context",
-#                  "elements": [
-#                    {
-#                      "type": "plain_text",
-#                      "text": "Author: Adrien L.",
-#                      "emoji": true
-#                    }
-#                  ]
-#                }
-#              ]
-#            }
-#        env:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Send message to Slack channel
+        if: failure()
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: 'CCQGMR4ES'
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":red_circle:  Publish rest api documentation in production failed. \n \n  @channel *We need someone* !"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "More details about the error <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}?check_suite_focus=true| here>"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "_C’est pas grave de faire des erreurs. Par contre il ne faut pas les merger!_ :imp:"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "plain_text",
+                      "text": "Author: Adrien L.",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
