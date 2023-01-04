@@ -1,3 +1,10 @@
+# Ensure old preview urls are redirected to the primary domain
+# https://docs.netlify.com/routing/redirects/redirect-options/#domain-level-redirects
+[[redirects]]
+from = "https://bonita-api-doc.netlify.app/*"
+to = "https://api-documentation.bonitasoft.com/:splat"
+force = true
+
 ########################################################################################################################
 # Bonita open-api redirect
 ########################################################################################################################
@@ -5,3 +12,4 @@
 [[redirects]]
 from = "/latest/*"
 to = "/{{latest}}/:splat"
+
