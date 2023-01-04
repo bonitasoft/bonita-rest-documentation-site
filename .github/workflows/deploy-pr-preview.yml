@@ -3,6 +3,11 @@ name: Deploy PR Preview
 on:
   pull_request:
     branches: [ master ]
+    paths:
+      - 'cli/**/*'
+      - 'site/**/*'
+      - '.github/workflows/deploy-pr-preview.yml'
+
 jobs:
   deployPreview:
     runs-on: ubuntu-22.04
