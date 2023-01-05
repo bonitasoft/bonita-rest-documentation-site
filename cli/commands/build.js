@@ -8,25 +8,37 @@ const path = require("path")
 const https = require('follow-redirects').https;// or 'https' for https:// URLs
 const unzipper = require("unzipper");
 const Handlebars = require('handlebars');
+const exec = require('child_process').exec;
 
 const logger = require('../logger.js');
 
-async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion) {
+const LATEST_FOLDER = 'latest';
+
+async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion, latest) {
     logger.debug(` - Release to deploy ${releaseVersion}`);
     try {
         let downloadUrl = downloadUrlTemplate.replaceAll("${releaseVersion}", releaseVersion);
         logger.debug(`Release download Url ${downloadUrl}`);
-        const httpRequest = doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion)
+        const httpRequest = doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion, latest)
         await httpRequest
     } catch (err) {
         logger.error(`Failed to download Bonita OpenAPI release for version: ${releaseVersion}: ${err.message}`)
     }
 }
 
-function doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion) {
+function doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion, latest) {
     return new Promise((resolve, reject) => {
         const zipPath = `${outputDirectory}/${releaseVersion}.zip`
         const output = fs.createWriteStream(zipPath);
+
+        function getOutputExtractFolderName() {
+            if (releaseVersion === latest) {
+                logger.info(`Release ${releaseVersion} will be extracted in '${LATEST_FOLDER}' folder`);
+                return unzipper.Extract({path: `${outputDirectory}/${LATEST_FOLDER}`});
+            }
+            return unzipper.Extract({path: `${outputDirectory}/${releaseVersion}`});
+        }
+
         https.get(downloadUrl, (response) => {
             response.pipe(output);
             // after download completed close filestream
@@ -35,9 +47,10 @@ function doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion)
                 logger.debug(`${releaseVersion} download Completed`);
                 // Unzip release to target folder
                 fs.createReadStream(zipPath)
-                    .pipe(unzipper.Extract({path: `${outputDirectory}/${releaseVersion}`}))
+                    .pipe(getOutputExtractFolderName())
                     .on('close', () => {
                         logger.info(`Release ${releaseVersion} unzip Completed`);
+
                         fs.unlinkSync(zipPath)
                         resolve()
                     })
@@ -59,7 +72,7 @@ exports.builder = (yargs) => {
         "s": {
             alias: "siteUrl",
             describe: "The url of the deployed site.",
-            default: 'https://bonita-api-doc.netlify.app',
+            default: 'https://api-documentation.bonitasoft.com',
             type: "string",
             nargs: 1,
         }, "l": {
@@ -101,6 +114,21 @@ exports.builder = (yargs) => {
     })
 }
 
+async function replaceProductionSiteTemplate(siteUrl, ga_key) {
+
+     exec(`sed -i "s/\\$SITE_URL/${siteUrl.replaceAll('/', '\\/')}/" build/**/*.html && sed -i "s/\\$GA_KEY/${ga_key}/" build/**/*.html`, (error, stdout, stderr) => {
+        if (error) {
+            logger.error(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            logger.error(`stderr: ${stderr}`);
+            return;
+        }
+    });
+    logger.debug('Processed successfully `vars` in index.html files');
+}
+
 exports.handler = async (argv) => {
     const {sourceDir, outputDir, siteUrl, latest, releases, downloadUrlTemplate} = argv;
 
@@ -120,9 +148,10 @@ exports.handler = async (argv) => {
     const vars = JSON.parse(fs.readFileSync(`${templatePath}/vars.json`, {encoding: 'utf8'}).toString())
 
     // Add cli args to global template vars
-    vars.siteUrl = siteUrl
-    vars.latest = latest
-    vars.releases = releases
+    vars.siteUrl = siteUrl;
+    vars.latest = latest;
+    vars.releases = releases;
+
 
     const processTemplates = (templateDir) => {
         const readDirMain = fs.readdirSync(templateDir);
@@ -153,8 +182,10 @@ exports.handler = async (argv) => {
     processTemplates(templatePath)
 
     for (const r of releases) {
-        await downloadRelease(downloadUrlTemplate, outputDir, r)
+        await downloadRelease(downloadUrlTemplate, outputDir, r, latest)
     }
+
+    await replaceProductionSiteTemplate(siteUrl, vars.ga_key || '');
     logger.info(`REST documentation generated in ${outputDir}`);
 }
 
