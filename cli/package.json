@@ -10,11 +10,15 @@
     "clean": "rimraf build .cache"
   },
   "dependencies": {
+    "connect": "^3.7.0",
     "follow-redirects": "^1.15.2",
     "fs-extra": "~11.1.0",
     "handlebars": "^4.7.7",
+    "hound": "^1.0.5",
     "js-yaml": "~4.1.0",
+    "livereload": "^0.9.3",
     "rimraf": "~3.0.2",
+    "serve-static": "^1.15.0",
     "unzipper": "^0.10.11",
     "winston": "^3.8.2",
     "yargs": "^17.6.2"
