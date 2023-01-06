@@ -8,8 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
-<div class="header"><a class="bonita-logo"
-                       href="https://documentation.bonitasoft.com/bonita/latest/rest-api-overview"></a>
+<div class="header"><a class="bonita-logo" href="{{siteUrl}}"></a>
 </div>
 
 <div style="width: 80%; margin: auto">
@@ -26,7 +25,7 @@
         <h2>Available documentations</h2>
         <ul>
             {{#each releases}}
-                <li>Version <a href="{{../siteUrl}}/{{this}}/index.html">{{this}}</a></li>
+                <li>Version <a href="{{../siteUrl}}/{{this}}/">{{this}}</a></li>
             {{/each}}
         </ul>
     </div>

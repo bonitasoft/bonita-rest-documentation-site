@@ -162,9 +162,8 @@ function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, 
     vars.siteUrl = siteUrl;
     vars.latest = latest;
     vars.releases = releases;
-    vars.watch = watch;
-    vars.port = port;
-    vars.liveReloadPort = liveReloadPort;
+    vars.lastModified = new Date().toISOString();
+
 
     const processTemplates = (templateDir) => {
         const readDirMain = fs.readdirSync(templateDir);
