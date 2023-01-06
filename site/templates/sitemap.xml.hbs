@@ -6,26 +6,31 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
     <url>
-        <loc>{{../siteUrl}}/latest/index.html</loc>
-        <lastmod>{{../lastModified}}</lastmod>
+        <loc>{{siteUrl}}/latest/index.html</loc>
+        <lastmod>{{lastModified}}</lastmod>
         <priority>1</priority>
     </url>
 
     <url>
-        <loc>{{../siteUrl}}/latest</loc>
-        <lastmod>{{../lastModified}}</lastmod>
+        <loc>{{siteUrl}}/latest</loc>
+        <lastmod>{{lastModified}}</lastmod>
         <priority>1</priority>
     </url>
 
-    {{#each releases}}
-        <url>
-            <loc>{{../siteUrl}}/{{this}}/index.html</loc>
-            <lastmod>{{../lastModified}}</lastmod>
-        </url>
-        <url>
-            <loc>{{../siteUrl}}/{{this}}</loc>
-            <lastmod>{{../lastModified}}</lastmod>
-        </url>
-    {{/each}}
+    <url>
+        <loc>{{siteUrl}}/</loc>
+        <lastmod>{{lastModified}}</lastmod>
+    </url>
+
+{{#each releases}}
+    <url>
+        <loc>{{../siteUrl}}/{{this}}/index.html</loc>
+        <lastmod>{{../lastModified}}</lastmod>
+    </url>
+    <url>
+        <loc>{{../siteUrl}}/{{this}}</loc>
+        <lastmod>{{../lastModified}}</lastmod>
+    </url>
+{{/each}}
 
 </urlset>
