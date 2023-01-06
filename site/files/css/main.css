@@ -1,0 +1,32 @@
+@import url(//fonts.googleapis.com/css?family=Roboto:400,700);
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+.pagenotfound {
+    text-align: center;
+    margin-bottom: 100px;
+    color: #dd042b;
+    font-size: 24px;
+}
+.paragraph{
+    text-align: center;
+    line-height: 1.6;
+}
+.header{
+    background-color: #19465f;
+    height: 63px;
+}
+.bonita-logo {
+    background: url(/images/bonitasoft-logo.svg) no-repeat 50% 45%;
+    background-size: contain;
+    display: block;
+    height: 3.5rem;
+    padding: 0;
+    width: 9.5rem;
+}
