@@ -8,14 +8,12 @@ const path = require("path")
 const https = require('follow-redirects').https;// or 'https' for https:// URLs
 const unzipper = require("unzipper");
 const Handlebars = require('handlebars');
+const chokidar = require('chokidar');
 const exec = require('child_process').exec;
 
 const livereload = require('livereload');
 const connect = require('connect');
 const serverStatic = require('serve-static');
-const hound = require('hound')
-
-
 const logger = require('../logger.js');
 
 const LATEST_FOLDER = 'latest';
@@ -99,10 +97,8 @@ exports.builder = (yargs) => {
             nargs: 1
         }, "w": {
             alias: "watch",
-            describe: "Start a server for preview and watch for any file changes. Hot reload the server if any changes.",
-            default: false,
-            type: "boolean",
-            nargs: 1
+            boolean:true,
+            describe: "Start a server for preview and watch for any file changes. Hot reload the server if any changes."
         }, "p": {
             alias: "port",
             describe: "The preview server port used to browse the site.",
@@ -153,7 +149,7 @@ async function replaceProductionSiteTemplate(siteUrl, ga_key) {
     logger.debug('Processed successfully `vars` in index.html files');
 }
 
-function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port,liveReloadPort) {
+function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort) {
     // Copy static files from "src/files" folder
     const staticFilePath = `${sourceDir}/files`
     fse.copySync(staticFilePath, `${outputDir}/`);
@@ -223,7 +219,7 @@ exports.handler = async (argv) => {
     fse.ensureDirSync(outputDir);
 
     // First rendering ot the site
-    const vars = processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port,liveReloadPort);
+    const vars = processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort);
 
     // Process releases to publish
     for (const r of releases) {
@@ -248,16 +244,16 @@ exports.handler = async (argv) => {
             res.end();
         });
         // error middleware for errors that occurred in middleware declared before this
+
         app.use(function onerror(err, req, res, next) {
-            logger.error('err: '+ err)
-            // logger.error(JSON.stringify(res))
+            logger.error(err)
             next();
         });
 
         // Since this is the last non-error-handling
-        // middleware use()d, we assume 404, as nothing else
+        // middleware use(), we assume 404, as nothing else
         // responded.
-        app.use(function(req, res, next) {
+        app.use(function (req, res) {
             res.writeHead(307, {Location: "/404.html"});
             res.end();
         });
@@ -265,26 +261,12 @@ exports.handler = async (argv) => {
 
         // Watch source directory and trigger rebuild
         logger.info(`Watching files in ${sourceDir}`);
-        const watcher = hound.watch(sourceDir)
-        // Add callbacks for file and directory events.
-        // The change event only applies to files.
-        watcher.on('create', function (file, stats) {
-            if (!file.endsWith('~')) {
-                console.log(file + ' was created')
-                processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port);
-            }
-        })
-        watcher.on('change', function (file, stats) {
-            if (!file.endsWith('~')) {
-                console.log(file + ' was changed')
-                processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port);
-            }
-        })
-        watcher.on('delete', function (file) {
-            if (!file.endsWith('~')) {
-                console.log(file + ' was deleted')
-                processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port);
-            }
+
+        const watcher = chokidar.watch(sourceDir);
+
+        watcher.on('all', (eventName, path) => {
+            logger.info(`[${eventName}] ${path}`);
+            processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port);
         })
 
         // livereloadServer trigger browser reload on site output changes

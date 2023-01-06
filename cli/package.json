@@ -10,11 +10,11 @@
     "clean": "rimraf build .cache"
   },
   "dependencies": {
+    "chokidar": "^3.5.3",
     "connect": "^3.7.0",
     "follow-redirects": "^1.15.2",
     "fs-extra": "~11.1.0",
     "handlebars": "^4.7.7",
-    "hound": "^1.0.5",
     "js-yaml": "~4.1.0",
     "livereload": "^0.9.3",
     "rimraf": "~3.0.2",
