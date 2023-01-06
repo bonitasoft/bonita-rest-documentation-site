@@ -74,6 +74,15 @@ Simply run the following command line.
 node cli/restdoc-site.js --config ./cli/restdoc-site.cfg.json build
 ----
 
+=== Development mode
+
+Simply run the following command line to get the development mode with live reload
+
+[source,bash]
+----
+node cli/restdoc-site.js --config ./cli/restdoc-site.cfg.json build -w -p 5050
+----
+
 ==== CLI Configuration
 
 Some argument are passed via the configuration files:

@@ -8,8 +8,12 @@ const path = require("path")
 const https = require('follow-redirects').https;// or 'https' for https:// URLs
 const unzipper = require("unzipper");
 const Handlebars = require('handlebars');
+const chokidar = require('chokidar');
 const exec = require('child_process').exec;
 
+const livereload = require('livereload');
+const connect = require('connect');
+const serverStatic = require('serve-static');
 const logger = require('../logger.js');
 
 const LATEST_FOLDER = 'latest';
@@ -91,6 +95,22 @@ exports.builder = (yargs) => {
             default: "https://github.com/bonitasoft/bonita-openapi/releases/download/${releaseVersion}/bonita-openapi-${releaseVersion}.zip",
             type: "string",
             nargs: 1
+        }, "w": {
+            alias: "watch",
+            boolean:true,
+            describe: "Start a server for preview and watch for any file changes. Hot reload the server if any changes."
+        }, "p": {
+            alias: "port",
+            describe: "The preview server port used to browse the site.",
+            default: 8000,
+            type: "number",
+            nargs: 1
+        }, "lrp": {
+            alias: "liveReloadPort",
+            describe: "The live reload server port (only use by browser to check for reloads).",
+            default: 35729,
+            type: "number",
+            nargs: 1
         },
     }).check(async (argv) => {
         const sourceDir = argv.sourceDir
@@ -116,7 +136,7 @@ exports.builder = (yargs) => {
 
 async function replaceProductionSiteTemplate(siteUrl, ga_key) {
 
-     exec(`sed -i "s/\\$SITE_URL/${siteUrl.replaceAll('/', '\\/')}/" build/**/*.html && sed -i "s/\\$GA_KEY/${ga_key}/" build/**/*.html`, (error, stdout, stderr) => {
+    exec(`sed -i "s/\\$SITE_URL/${siteUrl.replaceAll('/', '\\/')}/" build/**/*.html && sed -i "s/\\$GA_KEY/${ga_key}/" build/**/*.html`, (error, stdout, stderr) => {
         if (error) {
             logger.error(`error: ${error.message}`);
             return;
@@ -129,16 +149,7 @@ async function replaceProductionSiteTemplate(siteUrl, ga_key) {
     logger.debug('Processed successfully `vars` in index.html files');
 }
 
-exports.handler = async (argv) => {
-    const {sourceDir, outputDir, siteUrl, latest, releases, downloadUrlTemplate} = argv;
-
-    logger.info('Building REST documentation site');
-
-    logger.debug(`The site url is ${siteUrl}`);
-    logger.debug(`Latest release is ${latest}`);
-
-    fse.ensureDirSync(outputDir);
-
+function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort) {
     // Copy static files from "src/files" folder
     const staticFilePath = `${sourceDir}/files`
     fse.copySync(staticFilePath, `${outputDir}/`);
@@ -151,7 +162,9 @@ exports.handler = async (argv) => {
     vars.siteUrl = siteUrl;
     vars.latest = latest;
     vars.releases = releases;
-
+    vars.watch = watch;
+    vars.port = port;
+    vars.liveReloadPort = liveReloadPort;
 
     const processTemplates = (templateDir) => {
         const readDirMain = fs.readdirSync(templateDir);
@@ -180,12 +193,88 @@ exports.handler = async (argv) => {
         });
     };
     processTemplates(templatePath)
+    return vars;
+}
 
+exports.handler = async (argv) => {
+    logger.info('Building REST documentation site');
+
+    const {
+        sourceDir,
+        outputDir,
+        latest,
+        releases,
+        downloadUrlTemplate,
+        watch,
+        port,
+        liveReloadPort
+    } = argv;
+
+    // If dev mode is enabled, use localhost url instead of real site url
+    let siteUrl = watch ? `http://localhost:${port}` : argv.siteUrl
+
+    logger.debug(`The site url is ${siteUrl}`);
+    logger.debug(`Latest release is ${latest}`);
+
+    fse.ensureDirSync(outputDir);
+
+    // First rendering ot the site
+    const vars = processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort);
+
+    // Process releases to publish
     for (const r of releases) {
         await downloadRelease(downloadUrlTemplate, outputDir, r, latest)
     }
-
     await replaceProductionSiteTemplate(siteUrl, vars.ga_key || '');
+
     logger.info(`REST documentation generated in ${outputDir}`);
+
+    // If dev mode is enabled, reprocess file from source directory on changes and trigger browser reload
+    if (watch) {
+
+        // Serve static site from output directory
+        var app = connect();
+        app.use(serverStatic(outputDir, {
+            dotfiles: 'ignore'
+        }));
+        // simulate 'latest' redirection
+        app.use(`/${latest}`, (req, res) => {
+            // req.url starts with the latest version so redirect to the "latest" folder
+            res.writeHead(307, {Location: "/latest/"});
+            res.end();
+        });
+        // error middleware for errors that occurred in middleware declared before this
+
+        app.use(function onerror(err, req, res, next) {
+            logger.error(err)
+            next();
+        });
+
+        // Since this is the last non-error-handling
+        // middleware use(), we assume 404, as nothing else
+        // responded.
+        app.use(function (req, res) {
+            res.writeHead(307, {Location: "/404.html"});
+            res.end();
+        });
+        app.listen(port);
+
+        // Watch source directory and trigger rebuild
+        logger.info(`Watching files in ${sourceDir}`);
+
+        const watcher = chokidar.watch(sourceDir);
+
+        watcher.on('all', (eventName, path) => {
+            logger.info(`[${eventName}] ${path}`);
+            processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port);
+        })
+
+        // livereloadServer trigger browser reload on site output changes
+        var livereloadServer = livereload.createServer({
+            port: liveReloadPort,
+            extraExts: ['html', 'css', 'js', 'json', 'png', 'gif', 'jpg', 'svg', 'hbs']
+        }, () => logger.info(`Dev server is ready at http://localhost:${port}`));
+        livereloadServer.watch(outputDir);
+    }
 }
 
