@@ -14,14 +14,16 @@ body {
     color: #dd042b;
     font-size: 24px;
 }
-.paragraph{
-    text-align: center;
+
+.paragraph {
     line-height: 1.6;
 }
-.header{
+
+.header {
     background-color: #19465f;
     height: 63px;
 }
+
 .bonita-logo {
     background: url(/images/bonitasoft-logo.svg) no-repeat 50% 45%;
     background-size: contain;
