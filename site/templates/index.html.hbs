@@ -17,16 +17,19 @@
         <img src="/images/bonita-resources-doc.png" style="width:400px">
     </div>
     <h3>OpenAPI v3</h3>
-    <p class="paragraph">
-        Bonita provides an <a href="https://swagger.io/specification/">OpenAPI v3</a> specification for the REST APIs exposed by the platform.
+    <p>
+        Bonita provides an <a href="https://swagger.io/specification/">OpenAPI v3</a> specification for the REST APIs
+        exposed by the platform.
     </p>
-    <p class="paragraph">
+    <p>
         Bonita provide a REST API than can be accessed by any HTTP client, <code>rest</code> or <code>curl</code>,
         or the HTTP library which is part of most modern programming languages.
     </p>
-    <p class="paragraph">
-        If you are already using Java, have a look at the <a href="https://github.com/bonitasoft/bonita-java-client">Bonita java client</a> which allow you to build apps interacting with Bonita quickly and easily.<br/>
-        If Java don’t work for you, you can use the Bonita Engine API directly. The java client code is mostly generated based on the Bonita OpenAPI specification.
+    <p>
+        If you are already using Java, have a look at the <a href="https://github.com/bonitasoft/bonita-java-client">Bonita
+        java client</a> which allow you to build apps interacting with Bonita quickly and easily.<br/>
+        If Java don’t work for you, you can use the Bonita Engine API directly. The java client code is mostly generated
+        based on the Bonita OpenAPI specification.
     </p>
     <h3>View the API references</h3>
     <ul>
@@ -34,10 +37,38 @@
             <li>Version <a href="{{../siteUrl}}/{{this}}/">{{this}}</a></li>
         {{/each}}
     </ul>
+
+    <h3>Compatibility matrix</h3>
+
+    This matrix table should be read like this: The <code>API_VERSION</code> API version is the lowest compatible
+    version with Bonita starting from <code>BONITA_VERSION</code>.
+
+    <table class="compatibility-table">
+        <thead>
+        <tr>
+            <th>Rest api version</th>
+            <th>Bonita version</th>
+            <th>Bonita technical version</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each compatibility}}
+            <tr>
+                <td>
+                    <a href="{{../siteUrl}}/{{this.restApiVersion}}">{{this.restApiVersion}}</a>
+                </td>
+                <td>{{this.oldestBonitaVersion}}</td>
+                <td>{{this.technicalBonitaVersion}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+
     <h3>Documentation archives</h3>
-    <p class="paragraph">
+    <p>
         If you need to access to OpenAPI documentation not published on this site anymore,
-        you can still download the zipped documentation from previous releases from Github repository <a href="https://github.com/bonitasoft/bonita-openapi/releases">bonita-openapi</a>
+        you can still download the zipped documentation from previous releases from Github repository <a
+            href="https://github.com/bonitasoft/bonita-openapi/releases">bonita-openapi</a>
     </p>
 </div>
 {{#if ga_key}}
