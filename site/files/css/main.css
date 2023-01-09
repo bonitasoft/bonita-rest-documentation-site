@@ -23,14 +23,13 @@ body {
 .header {
     background-color: #19465f;
     height: 67px;
-    padding-left: 10px;
 }
 
 .bonita-logo {
     background: url(/images/bonitasoft-logo.svg) no-repeat 50% 45%;
     background-size: contain;
     display: block;
-    height: 67px;
-    width: 200px;
+    height: 59.13px;
+    width: 260px;
     padding: 0;
 }
