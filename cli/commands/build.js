@@ -117,7 +117,7 @@ exports.handler = async (argv) => {
 
     // If dev mode is enabled, reprocess file from source directory on changes and trigger browser reload
     if (watch) {
-        logger.info(`Watch mode enabled`);
+        logger.info(`Watch mode enabled, watching files from ${sourceDir}`);
 
         // Serve static site from output directory
         const app = connect();
@@ -147,8 +147,6 @@ exports.handler = async (argv) => {
         app.listen(port);
 
         // Watch source directory and trigger rebuild
-        logger.info(`Watching files in ${sourceDir}`);
-
         const watcher = chokidar.watch(sourceDir, {
             alwaysStat: false,
             awaitWriteFinish: {

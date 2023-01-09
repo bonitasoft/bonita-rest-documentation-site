@@ -14,19 +14,22 @@ body {
     color: #dd042b;
     font-size: 24px;
 }
-.paragraph{
-    text-align: center;
+
+.paragraph {
     line-height: 1.6;
+    margin-top: 20px;
 }
-.header{
+
+.header {
     background-color: #19465f;
-    height: 63px;
+    height: 67px;
 }
+
 .bonita-logo {
     background: url(/images/bonitasoft-logo.svg) no-repeat 50% 45%;
     background-size: contain;
     display: block;
-    height: 3.5rem;
+    height: 59.13px;
+    width: 260px;
     padding: 0;
-    width: 9.5rem;
 }
