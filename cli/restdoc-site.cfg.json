@@ -1,5 +1,35 @@
 {
   "sourceDir": "./site",
   "downloadUrlTemplate": "https://github.com/bonitasoft/bonita-openapi/releases/download/${releaseVersion}/bonita-openapi-${releaseVersion}.zip",
-  "releases" : ["0.0.11"]
+  "latest": "0.0.11",
+  "compatibility": [
+    {
+      "bonita": "2022.2",
+      "apiVersions": [
+        "0.0.11"
+      ],
+      "bonitaSemver": "7.15.x"
+    },
+    {
+      "bonita": "2022.1",
+      "apiVersions": [
+        "0.0.11"
+      ],
+      "bonitaSemver": "7.14.x"
+    },
+    {
+      "bonita": "2021.2",
+      "apiVersions": [
+        "0.0.11"
+      ],
+      "bonitaSemver": "7.13.x"
+    },
+    {
+      "bonita": "2021.1",
+      "apiVersions": [
+        "0.0.11"
+      ],
+      "bonitaSemver": "7.12.x"
+    }
+  ]
 }

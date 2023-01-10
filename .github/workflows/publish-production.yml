@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Build Setup
         uses: ./.github/actions/build-setup
+      - run: npm --prefix ./cli run test
       - name: Build site
         run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build
       - name: Create deploy message
