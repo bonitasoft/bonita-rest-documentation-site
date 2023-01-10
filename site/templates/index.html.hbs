@@ -39,26 +39,22 @@
     </ul>
 
     <h3>Compatibility matrix</h3>
-
-    This matrix table should be read like this: The <code>API_VERSION</code> API version is the lowest compatible
-    version with Bonita starting from <code>BONITA_VERSION</code>.
-
     <table class="compatibility-table">
         <thead>
         <tr>
-            <th>Rest api version</th>
             <th>Bonita version</th>
-            <th>Bonita technical version</th>
+            <th class="rest-api-column">REST API versions</th>
         </tr>
         </thead>
         <tbody>
         {{#each compatibility}}
             <tr>
-                <td>
-                    <a href="{{../siteUrl}}/{{this.restApiVersion}}">{{this.restApiVersion}}</a>
+                <td><b>{{this.bonita}}</b> ({{this.bonitaSemver}})</td>
+                <td class="rest-api-column">
+                    {{#each apiVersions}}
+                        <a href="{{../siteUrl}}/{{this}}">{{this}}</a>
+                    {{/each}}
                 </td>
-                <td>{{this.oldestBonitaVersion}}</td>
-                <td>{{this.technicalBonitaVersion}}</td>
             </tr>
         {{/each}}
         </tbody>

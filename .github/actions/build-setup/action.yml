@@ -13,4 +13,6 @@ runs:
       uses: bahmutov/npm-install@v1
       with:
         working-directory: cli
-        install-command: npm ci --ignore-scripts --prefer-offline --audit false
+        install-command: | 
+         npm ci --ignore-scripts --prefer-offline --audit false
+         npm run test

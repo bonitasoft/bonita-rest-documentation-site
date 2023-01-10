@@ -33,11 +33,6 @@ exports.builder = (yargs) => {
             describe: "The release to use as latest for redirection.",
             type: "string",
             nargs: 1,
-        }, "r": {
-            alias: "releases",
-            describe: "The releases of Bonita OpenAPI documentation to deploy.",
-            demandOption: "The release versions are required.",
-            type: "array",
         }, "ut": {
             alias: "downloadUrlTemplate",
             describe: "The template url to download a release of Bonita OpenAPI documentation. URL should contains '${releaseVersion}' to be replaced.",
@@ -70,7 +65,7 @@ exports.builder = (yargs) => {
             return true // tell Yargs that the arguments passed the check
         }
     }).check((argv) => {
-        const releases = argv.releases
+        const releases = getApiVersionsSortedToDeploy(argv.compatibility);
         if (releases.length === 1) {
             argv.latest = releases[0]
         }
@@ -89,13 +84,15 @@ exports.handler = async (argv) => {
         sourceDir,
         outputDir,
         latest,
-        releases,
+        compatibility,
         downloadUrlTemplate,
         watch,
         port,
         liveReloadPort
     } = argv;
 
+    compatibility.map(item => item.apiVersions.sort());
+    const releasesToDeploy = getApiVersionsSortedToDeploy(compatibility);
     // If dev mode is enabled, use localhost url instead of real site url
     let siteUrl = watch ? `http://localhost:${port}` : argv.siteUrl
 
@@ -103,14 +100,14 @@ exports.handler = async (argv) => {
     logger.debug(`Latest release is ${latest}`);
 
     fse.ensureDirSync(outputDir);
-
+    logger.debug(`Release to deployed ${releasesToDeploy}`);
     // Process releases to publish
-    for (const r of releases) {
+    for (const r of releasesToDeploy) {
         await downloadRelease(downloadUrlTemplate, outputDir, r, latest)
     }
 
     // First rendering ot the site
-    let vars = processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort);
+    let vars = processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
 
     await replaceProductionSiteTemplate(siteUrl, vars.ga_key || '');
     logger.info(`REST documentation generated in ${outputDir}`);
@@ -159,7 +156,7 @@ exports.handler = async (argv) => {
 
         watcher.on('all', (eventName, path) => {
             logger.debug(`[${eventName}] ${path}`);
-            processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort);
+            processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
         })
 
         // livereloadServer trigger browser reload on site output changes
@@ -186,7 +183,7 @@ async function replaceProductionSiteTemplate(siteUrl, ga_key) {
     logger.debug('Processed successfully `vars` in index.html files');
 }
 
-function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, port, liveReloadPort) {
+function processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort) {
     logger.debug("Processing sources ...")
 
     // Copy static files from "src/files" folder
@@ -200,13 +197,12 @@ function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, 
     // Add cli args to global template vars
     vars.siteUrl = siteUrl;
     vars.latest = latest;
-    vars.releases = releases;
     vars.watch = watch;
     vars.port = port;
     vars.liveReloadPort = liveReloadPort;
     vars.lastModified = new Date().toISOString();
-
-
+    vars.releases = releasesToDeploy;
+    vars.compatibility = compatibility;
     const processTemplates = (templateDir) => {
         const readDirMain = fs.readdirSync(templateDir);
         readDirMain.forEach((templateFileName) => {
@@ -236,6 +232,16 @@ function processSources(sourceDir, outputDir, siteUrl, latest, releases, watch, 
     processTemplates(templatePath)
     return vars;
 }
+
+
+/*
+ ** Get unique version on Api to deploy
+ */
+function getApiVersionsSortedToDeploy(compatibility) {
+    return [...new Set(compatibility.map(item => item.apiVersions).flat())].sort().reverse();
+}
+
+exports.getApiVersionsToDeploy = getApiVersionsSortedToDeploy;
 
 async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion, latest) {
     logger.debug(` - Release to deploy ${releaseVersion}`);
