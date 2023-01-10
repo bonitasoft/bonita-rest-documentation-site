@@ -1,4 +1,4 @@
-const getApiVersionsToDeploy = require('../commands/build.js').getApiVersionsToDeploy;
+const {getApiVersionsSortedToDeploy} = require('../commands/build.js');
 
 
 test('should return an unique api version', () => {
@@ -11,7 +11,7 @@ test('should return an unique api version', () => {
             "bonitaSemver": "7.12.x"
         }
     ];
-    expect(getApiVersionsToDeploy(releases)).toStrictEqual(['0.0.11']);
+    expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.11']);
 });
 
 test('should return two version without duplicate when duplicate in apiVersion is given', () => {
@@ -31,7 +31,7 @@ test('should return two version without duplicate when duplicate in apiVersion i
             "bonitaSemver": "7.12.x"
         }
     ];
-    expect(getApiVersionsToDeploy(releases)).toStrictEqual(['0.0.11', '0.0.12']);
+    expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.12', '0.0.11']);
 });
 test('should return only one deployed version ', () => {
     const releases = [
@@ -64,5 +64,5 @@ test('should return only one deployed version ', () => {
             "bonitaSemver": "7.15.x"
         }
     ]
-    expect(getApiVersionsToDeploy(releases)).toStrictEqual(['0.0.11']);
+    expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.11']);
 });

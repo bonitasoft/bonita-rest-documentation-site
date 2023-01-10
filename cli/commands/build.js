@@ -241,7 +241,7 @@ function getApiVersionsSortedToDeploy(compatibility) {
     return [...new Set(compatibility.map(item => item.apiVersions).flat())].sort().reverse();
 }
 
-exports.getApiVersionsToDeploy = getApiVersionsSortedToDeploy;
+exports.getApiVersionsSortedToDeploy = getApiVersionsSortedToDeploy;
 
 async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion, latest) {
     logger.debug(` - Release to deploy ${releaseVersion}`);
