@@ -21,17 +21,27 @@ p {
 }
 
 .header {
-    background-color: #19465f;
-    height: 67px;
-}
-
-.bonita-logo {
-    background: url(/images/bonitasoft-logo.svg) no-repeat 50% 45%;
-    background-size: contain;
+    background-color:#19465f;
     display: block;
-    height: 59.13px;
-    width: 260px;
-    padding: 0;
+    box-sizing: border-box;
+    line-height: 21px;
+    text-align: left;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    text-rendering: optimizeSpeed;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+.header > a {
+    display: inline-block;
+}
+.bonita-logo {
+    box-sizing: border-box;
+    display: block;
+    max-width: 260px;
+    padding: 2px;
+    width: 100%;
 }
 
 .compatibility-table {

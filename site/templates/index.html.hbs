@@ -3,46 +3,42 @@
 <head>
     <title>Bonita OpenAPI Documentation</title>
     <link rel="icon" href="/images/favicon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta description="Bonita provides REST API’s to interact with the Runtime. Learn how to use them here">
-    <meta name="keywords" content="REST, API, Bonita, BPM, OpenApi, Postman, Swagger, Documentation">
+    <meta name="keywords"
+          content="REST, API, Bonita, BPM, OpenApi, Postman, Swagger, Documentation">
     <meta name="author" content="Bonitasoft">
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
 <body>
-<div class="header"><a class="bonita-logo" href="{{siteUrl}}"></a>
+<div class="header">
+    <a href="{{siteUrl}}">
+        <img src="/images/bonitasoft-logo.svg" alt="Bonita API" class="bonita-logo">
+    </a>
 </div>
 
 <div style="width: 50%; margin: auto">
     <h1>Bonita REST API Documentation</h1>
     <div style="text-align: center">
-        <img src="/images/bonita-resources-doc.png" style="width:400px">
+        <img src="/images/bonita-resources-doc.png" style="width:300px">
     </div>
-    <h3>OpenAPI v3</h3>
+    <h3>OpenAPI v3 format</h3>
     <p>
-        Bonita provides an <a href="https://swagger.io/specification/">OpenAPI v3</a> specification for the REST APIs
-        exposed by the platform.
+        Bonita provides an <a href="https://swagger.io/specification/">OpenAPI v3</a>
+        specification for the REST APIs
+        exposed by the platform. These REST API can be accessed by any HTTP client or curl
+        or any HTTP library which is part of most modern programming languages.
     </p>
     <p>
-        Bonita provide a REST API than can be accessed by any HTTP client, <code>rest</code> or <code>curl</code>,
-        or the HTTP library which is part of most modern programming languages.
-    </p>
-    <p>
-        If you are already using Java, have a look at the <a href="https://github.com/bonitasoft/bonita-java-client">Bonita
-        java client</a> which allow you to build apps interacting with Bonita quickly and easily.<br/>
-        If Java don’t work for you, you can use the Bonita HTTP API directly. The java client code is mostly generated
+        If you are already using Java, have a look at the <a
+            href="https://github.com/bonitasoft/bonita-java-client">Bonita
+        Java client</a> which allow you to build apps interacting with Bonita quickly and
+        easily. The java client code is mostly generated
         based on the Bonita OpenAPI specification.
     </p>
-    <h3>View the API references</h3>
-    <ul>
-        {{#each releases}}
-            <li>Version <a href="{{../siteUrl}}/{{this}}/">{{this}}</a></li>
-        {{/each}}
-    </ul>
-
     <h3>Compatibility matrix</h3>
     <table class="compatibility-table">
         <thead>
@@ -64,11 +60,17 @@
         {{/each}}
         </tbody>
     </table>
-
+    <h3>View the API references</h3>
+    <ul>
+        {{#each releases}}
+            <li>Version <a href="{{../siteUrl}}/{{this}}/">{{this}}</a></li>
+        {{/each}}
+    </ul>
     <h3>Documentation archives</h3>
     <p>
         If you need to access to OpenAPI documentation not published on this site anymore,
-        you can still download the zipped documentation from previous releases from Github repository <a
+        you can still download the zipped documentation from previous releases from Github
+        repository <a
             href="https://github.com/bonitasoft/bonita-openapi/releases">bonita-openapi</a>
     </p>
 </div>
