@@ -26,10 +26,6 @@ jobs:
           surge-token: ${{ secrets.SURGE_TOKEN_DOC }}
       - name: Build site
         run: node cli/restdoc-site.js --config cli/restdoc-site.cfg.json build -s ${{steps.surge-preview-tools.outputs.preview-url}}
-      - name: Delete useless files
-        run: |
-          rm build/robots.txt
-          rm build/netlify.toml
       - name: Publish preview
         uses: afc163/surge-preview@v1
         if: steps.surge-preview-tools.outputs.can-run-surge-command == 'true'
