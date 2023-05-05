@@ -12,6 +12,20 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <style>
+        ul.versions {
+            list-style-type: none;
+        }
+        ul.versions > li {
+            display: inline;
+        }
+        ul.versions > li:after {
+            content: ', ';
+        }
+        ul.versions > li:last-of-type:after {
+            content: '';
+        }
+    </style>
 </head>
 <body>
 <div class="header">
@@ -52,9 +66,11 @@
             <tr>
                 <td><b>{{this.bonita}}</b> ({{this.bonitaSemver}})</td>
                 <td class="rest-api-column">
+                    <ul class="versions">
                     {{#each apiVersions}}
-                        <a href="{{../siteUrl}}/{{this}}">{{this}}</a>
+                        <li><a href="{{../siteUrl}}/{{this}}">{{this}}</a></li>
                     {{/each}}
+                    </ul>
                 </td>
             </tr>
         {{/each}}
