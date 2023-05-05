@@ -107,7 +107,7 @@ exports.handler = async (argv) => {
     }
 
     // First rendering ot the site
-    let vars = processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
+//    let vars = processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
 
   //  await replaceProductionSiteTemplate(siteUrl, vars.ga_key || '');
     logger.info(`REST documentation generated in ${outputDir}`);
