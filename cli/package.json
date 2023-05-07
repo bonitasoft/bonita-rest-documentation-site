@@ -21,7 +21,7 @@
     "livereload": "^0.9.3",
     "rimraf": "~3.0.2",
     "serve-static": "^1.15.0",
-    "unzipper": "^0.10.11",
+    "adm-zip": "^0.5.10",
     "winston": "^3.8.2",
     "yargs": "^17.6.2"
   },

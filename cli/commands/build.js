@@ -6,7 +6,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const path = require("path")
 const https = require('follow-redirects').https;// or 'https' for https:// URLs
-const unzipper = require("unzipper");
+const AdmZip = require("adm-zip");
 const Handlebars = require('handlebars');
 const chokidar = require('chokidar');
 const exec = require('child_process').exec;
@@ -260,12 +260,13 @@ function doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion,
         const zipPath = `${outputDirectory}/${releaseVersion}.zip`
         const output = fs.createWriteStream(zipPath);
 
-        function getOutputExtractFolderName() {
+        function extractToFolder(zip) {
             if (releaseVersion === latest) {
                 logger.info(`Release ${releaseVersion} will be extracted in '${LATEST_FOLDER}' folder`);
-                return unzipper.Extract({path: `${outputDirectory}/${LATEST_FOLDER}`});
+                zip.extractAllTo(`${outputDirectory}/${LATEST_FOLDER}`, true);
+                return;
             }
-            return unzipper.Extract({path: `${outputDirectory}/${releaseVersion}`});
+            zip.extractAllTo(`${outputDirectory}/${releaseVersion}`, true)
         }
 
         https.get(downloadUrl, (response) => {
@@ -275,20 +276,11 @@ function doDownloadAndUnzipRelease(outputDirectory, downloadUrl, releaseVersion,
                 output.close();
                 logger.debug(`${releaseVersion} download Completed`);
                 // Unzip release to target folder
-                fs.createReadStream(zipPath)
-                    .pipe(getOutputExtractFolderName())
-                    .on('close', () => {
-                        logger.info(`Release ${releaseVersion} unzip Completed`);
-
-                        fs.unlinkSync(zipPath)
-                        resolve()
-                    })
-                    .on('error', (err) => {
-                        fs.unlinkSync(zipPath)
-                        logger.error(`Failed to unzip release ${releaseVersion} - ${err.message}`);
-                        logger.error(`Skip release ${releaseVersion}`);
-                        reject(err)
-                    });
+                var zip = new AdmZip(zipPath);
+                extractToFolder(zip);
+                logger.info(`Release ${releaseVersion} unzip Completed`);
+                fs.unlinkSync(zipPath);
+                resolve();
             });
         });
     });
