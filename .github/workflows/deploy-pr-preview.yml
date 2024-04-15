@@ -20,7 +20,7 @@ jobs:
       - name: Build Setup
         uses: ./.github/actions/build-setup
       - run: npm --prefix ./cli run test
-      - uses: bonitasoft/actions/packages/surge-preview-tools@v2
+      - uses: bonitasoft/actions/packages/surge-preview-tools@v3
         if: ${{ success() && github.event_name == 'pull_request' }}
         id: surge-preview-tools
         with:
