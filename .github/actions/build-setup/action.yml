@@ -6,7 +6,7 @@ runs:
     - name: Setup node
       uses: actions/setup-node@v4
       with:
-        node-version-file: '.nvmrc'
+        node-version-file: 'cli/.nvmrc'
         cache: 'npm'
         cache-dependency-path: cli/package-lock.json
     - name: Install dependencies
