@@ -6,6 +6,7 @@ on:
     paths:
       - 'cli/**/*'
       - 'site/**/*'
+      - '.github/actions/build-setup/**/*'
       - '.github/workflows/deploy-pr-preview.yml'
 
 jobs:

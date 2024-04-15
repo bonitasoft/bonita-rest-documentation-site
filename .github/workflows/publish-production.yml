@@ -10,6 +10,7 @@ on:
     paths:
       - 'cli/**/*'
       - 'site/**/*'
+      - '.github/actions/build-setup/**/*'
       - '.github/workflows/publish-production.yml'
 
 permissions:
