@@ -20,15 +20,15 @@ This project contains the sources of https://bonita-api-doc.netlify.app/[Bonita 
 A basic CLI based on NodeJS (`cli/restdoc-site.js`) is used to build the site.
 It is based on http://yargs.js.org/[yargs] project and expose the following commands :
 
-- `clean` : delete previous build output
-- `build` : generate the static site to deploy in specified output directory (default to ./build)
+- `clean`: delete previous build output
+- `build`: generate the static site to deploy in specified output directory (default to ./build)
 
 == Requirements
 
-{url-node}[Node 18.x] (may work with newer versions, no guarantee).
+{url-node}[Node 20.x] (may work with newer versions, no guarantee).
 
 While you can install Node from the official packages, we strongly recommend that you use {url-nvm}[nvm] (Node Version Manager) to install and manage Node.
-Follow the {url-nvm-install}[nvm installation instructions] to set up nvm on your machine. Then run `nvm use`.
+Follow the {url-nvm-install}[nvm installation instructions] to set up nvm on your machine. Go the `cli` folder, then run `nvm use`.
 
 [NOTE]
 ====
