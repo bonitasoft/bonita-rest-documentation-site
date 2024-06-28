@@ -6,7 +6,7 @@
      {
       "bonita": "2024.3",
       "apiVersions": [
-        "0.0.16"
+        "0.0.18"
       ],
       "bonitaSemver": "10.2.x"
     },
