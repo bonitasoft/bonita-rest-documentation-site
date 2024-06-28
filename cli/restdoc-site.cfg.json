@@ -4,6 +4,13 @@
   "latest": "0.0.16",
   "compatibility": [
      {
+      "bonita": "2024.3",
+      "apiVersions": [
+        "0.0.18"
+      ],
+      "bonitaSemver": "10.2.x"
+    },
+    {
       "bonita": "2024.2",
       "apiVersions": [
         "0.0.16"
