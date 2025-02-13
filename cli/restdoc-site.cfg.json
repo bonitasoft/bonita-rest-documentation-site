@@ -1,12 +1,12 @@
 {
   "sourceDir": "./site",
   "downloadUrlTemplate": "https://github.com/bonitasoft/bonita-openapi/releases/download/${releaseVersion}/bonita-openapi-${releaseVersion}.zip",
-  "latest": "0.0.22",
+  "latest": "0.0.23",
   "compatibility": [
     {
       "bonita": "2025.1",
       "apiVersions": [
-        "0.0.22"
+        "0.0.23"
       ],
       "bonitaSemver": "10.3.x"
     },
