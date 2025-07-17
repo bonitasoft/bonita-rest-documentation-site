@@ -8,6 +8,24 @@ force = true
 ########################################################################################################################
 # Bonita open-api redirect
 ########################################################################################################################
+
+# Old 1.0.x redirects. In the future, this could be automatically generated from the `cli/restdoc-site.cfg.json` file.
+[[redirects]]
+from = "/1.0.0/*"
+to = "/{{latest}}/:splat"
+[[redirects]]
+from = "/1.0.1/*"
+to = "/{{latest}}/:splat"
+[[redirects]]
+from = "/1.0.2/*"
+to = "/{{latest}}/:splat"
+[[redirects]]
+from = "/1.0.3/*"
+to = "/{{latest}}/:splat"
+[[redirects]]
+from = "/1.0.4/*"
+to = "/{{latest}}/:splat"
+
 # latest
 [[redirects]]
 from = "/{{latest}}/*"
