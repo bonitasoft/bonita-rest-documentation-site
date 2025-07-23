@@ -6,28 +6,23 @@ to = "https://api-documentation.bonitasoft.com/:splat"
 force = true
 
 ########################################################################################################################
-# Bonita open-api redirect
+# Bonita open-api redirects
 ########################################################################################################################
 
-# Old 1.0.x redirects. In the future, this could be automatically generated from the `cli/restdoc-site.cfg.json` file.
+# Redirects the intermediate versions that are no longer available to the closed version available on the site.
+{{#each versionsToRedirect}}
+{{#each this}}
 [[redirects]]
-from = "/1.0.0/*"
-to = "/latest/:splat"
-[[redirects]]
-from = "/1.0.1/*"
-to = "/latest/:splat"
-[[redirects]]
-from = "/1.0.2/*"
-to = "/latest/:splat"
-[[redirects]]
-from = "/1.0.3/*"
-to = "/latest/:splat"
-[[redirects]]
-from = "/1.0.4/*"
-to = "/latest/:splat"
+from = "/{{this}}/*"
+to = "/{{@../key}}/:splat"
+{{/each}}
+
+{{/each}}
 
 # latest
 [[redirects]]
 from = "/{{latest}}/*"
 to = "/latest/:splat"
+# the latest version changes over time
+status = 302
 
