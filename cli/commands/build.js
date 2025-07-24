@@ -66,8 +66,12 @@ exports.builder = (yargs) => {
         }
     }).check((argv) => {
         const releases = getApiVersionsSortedToDeploy(argv.compatibility);
+        logger.debug(`Releases to deploy: ${releases}`);
         if (releases.length === 1) {
             argv.latest = releases[0]
+        } else if (argv.latest === undefined) {
+            argv.latest = releases[0]
+            logger.debug(`No latest release specified, using the latest release from the releases to deploy: ${argv.latest}`);
         }
         const latest = argv.latest
         if (!releases.includes(latest)) {
@@ -239,8 +243,8 @@ function processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, r
 }
 
 
-/*
- ** Get unique version on Api to deploy
+/**
+ * Get unique version on Api to deploy. Sorted in descending order.
  */
 function getApiVersionsSortedToDeploy(compatibility) {
     return [...new Set(compatibility.map(item => item.apiVersions).flat())].sort().reverse();
