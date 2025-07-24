@@ -11,6 +11,7 @@ force = true
 
 # Redirects the intermediate versions that are no longer available to the closed version available on the site.
 {{#each versionsToRedirect}}
+# Redirects to {{@key}}
 {{#each this}}
 [[redirects]]
 from = "/{{this}}/*"
