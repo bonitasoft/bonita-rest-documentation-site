@@ -14,12 +14,12 @@ describe('getApiVersionsSortedToDeploy', () => {
         expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.11']);
     });
 
-    test('should return two version without duplicate when duplicate in apiVersion is given', () => {
+    test('should return versions without duplicate when duplicate in apiVersion is given', () => {
         const releases = [
             {
                 "bonita": "2021.1",
                 "apiVersions": [
-                    "0.0.11"
+                    "0.0.3", "0.0.2"
                 ],
                 "bonitaSemver": "7.12.x"
             },
@@ -29,9 +29,16 @@ describe('getApiVersionsSortedToDeploy', () => {
                     "0.0.11", "0.0.12"
                 ],
                 "bonitaSemver": "7.12.x"
+            },
+            {
+                "bonita": "2021.3",
+                "apiVersions": [
+                    "0.0.11", "0.0.12"
+                ],
+                "bonitaSemver": "7.12.x"
             }
         ];
-        expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.12', '0.0.11']);
+        expect(getApiVersionsSortedToDeploy(releases)).toStrictEqual(['0.0.12', '0.0.11', '0.0.3', '0.0.2']);
     });
 
     test('should return only one deployed version ', () => {
@@ -71,11 +78,11 @@ describe('getApiVersionsSortedToDeploy', () => {
 
 describe('sortSemVer', () => {
     test('should sort versions that only differ on patch', () => {
-        expect(sortSemVer(['0.0.8', '0.0.4', '0.0.1'])).toStrictEqual(['0.0.1', '0.0.4', '0.0.8']);
+        expect(sortSemVer(['0.0.8', '0.0.4', '0.0.25', '0.0.1'])).toStrictEqual(['0.0.1', '0.0.4', '0.0.8', '0.0.25']);
     });
 
     test('should sort versions from various major and minor', () => {
-        expect(sortSemVer(['1.3.56', '3.1.4', '1.3.8', '0.4.8', '0.0.17'])).toStrictEqual(['0.0.17', '0.4.8', '1.3.8', '1.3.56', '3.1.4']);
+        expect(sortSemVer(['1.3.56', '3.1.4', '1.3.8', '0.4.8', '0.0.17', '1.3.22'])).toStrictEqual(['0.0.17', '0.4.8', '1.3.8', '1.3.22', '1.3.56', '3.1.4']);
     });
 
 });

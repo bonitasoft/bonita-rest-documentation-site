@@ -111,7 +111,7 @@ exports.handler = async (argv) => {
     }
 
     // Prepare redirects
-    const versionsToRedirect = computeVersionsToRedirect(sortSemVer(releasesToDeploy));
+    const versionsToRedirect = computeVersionsToRedirect(sortSemVerAscending(releasesToDeploy));
 
     // First rendering ot the site
     let vars = processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, releasesToDeploy, versionsToRedirect}, watch, port, liveReloadPort);
@@ -247,7 +247,7 @@ function processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, r
  * Get unique version on Api to deploy. Sorted in descending order.
  */
 function getApiVersionsSortedToDeploy(compatibility) {
-    return [...new Set(compatibility.map(item => item.apiVersions).flat())].sort().reverse();
+    return sortSemVerAscending([...new Set(compatibility.map(item => item.apiVersions).flat())]).reverse();
 }
 
 exports.getApiVersionsSortedToDeploy = getApiVersionsSortedToDeploy;
@@ -282,7 +282,7 @@ exports.computeVersionsToRedirect = computeVersionsToRedirect;
 /**
  * Sorts an array of semantic version strings in ascending order.
  */
-function sortSemVer(versions) {
+function sortSemVerAscending(versions) {
     return versions.sort((a, b) => {
         const [majorA, minorA, patchA] = a.split('.').map(Number);
         const [majorB, minorB, patchB] = b.split('.').map(Number);
@@ -302,7 +302,7 @@ function sortSemVer(versions) {
     });
 }
 
-exports.sortSemVer = sortSemVer;
+exports.sortSemVer = sortSemVerAscending;
 
 
 async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion, latest) {
