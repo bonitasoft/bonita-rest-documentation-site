@@ -66,8 +66,12 @@ exports.builder = (yargs) => {
         }
     }).check((argv) => {
         const releases = getApiVersionsSortedToDeploy(argv.compatibility);
+        logger.debug(`Releases to deploy: ${releases}`);
         if (releases.length === 1) {
             argv.latest = releases[0]
+        } else if (argv.latest === undefined) {
+            argv.latest = releases[0]
+            logger.debug(`No latest release specified, using the latest release from the releases to deploy: ${argv.latest}`);
         }
         const latest = argv.latest
         if (!releases.includes(latest)) {
@@ -106,8 +110,11 @@ exports.handler = async (argv) => {
         await downloadRelease(downloadUrlTemplate, outputDir, r, latest)
     }
 
+    // Prepare redirects
+    const versionsToRedirect = computeVersionsToRedirect(sortSemVerAscending(releasesToDeploy));
+
     // First rendering ot the site
-    let vars = processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
+    let vars = processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, releasesToDeploy, versionsToRedirect}, watch, port, liveReloadPort);
 
     await replaceProductionSiteTemplate(siteUrl, vars.ga_key || '');
     logger.info(`REST documentation generated in ${outputDir}`);
@@ -156,7 +163,7 @@ exports.handler = async (argv) => {
 
         watcher.on('all', (eventName, path) => {
             logger.debug(`[${eventName}] ${path}`);
-            processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort);
+            processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, releasesToDeploy, versionsToRedirect}, watch, port, liveReloadPort);
         })
 
         // livereloadServer trigger browser reload on site output changes
@@ -183,14 +190,14 @@ async function replaceProductionSiteTemplate(siteUrl, ga_key) {
     logger.debug('Processed successfully `vars` in index.html files');
 }
 
-function processSources(sourceDir, outputDir, siteUrl, latest, compatibility, releasesToDeploy, watch, port, liveReloadPort) {
+function processSources(sourceDir, outputDir, siteUrl, {latest, compatibility, releasesToDeploy, versionsToRedirect}, watch, port, liveReloadPort) {
     logger.debug("Processing sources ...")
 
     // Copy static files from "src/files" folder
     const staticFilePath = `${sourceDir}/files`
     fse.copySync(staticFilePath, `${outputDir}/`);
 
-    // Process handlerbars templates from "src/templates" folder
+    // Process handlebars templates from "src/templates" folder
     const templatePath = `${sourceDir}/templates`
 
     const vars = JSON.parse(fs.readFileSync(`${templatePath}/vars.json`, {encoding: 'utf8'}).toString())
@@ -203,6 +210,8 @@ function processSources(sourceDir, outputDir, siteUrl, latest, compatibility, re
     vars.lastModified = new Date().toISOString();
     vars.releases = releasesToDeploy;
     vars.compatibility = compatibility;
+    vars.versionsToRedirect = versionsToRedirect;
+
     const processTemplates = (templateDir) => {
         const readDirMain = fs.readdirSync(templateDir);
         readDirMain.forEach((templateFileName) => {
@@ -234,14 +243,67 @@ function processSources(sourceDir, outputDir, siteUrl, latest, compatibility, re
 }
 
 
-/*
- ** Get unique version on Api to deploy
+/**
+ * Get unique version on Api to deploy. Sorted in descending order.
  */
 function getApiVersionsSortedToDeploy(compatibility) {
-    return [...new Set(compatibility.map(item => item.apiVersions).flat())].sort().reverse();
+    return sortSemVerAscending([...new Set(compatibility.map(item => item.apiVersions).flat())]).reverse();
 }
 
 exports.getApiVersionsSortedToDeploy = getApiVersionsSortedToDeploy;
+
+/**
+ * @param publishedVersions an array of versions must be sorted in ascending order
+ * @return an object whose keys are the target versions and the value is the array of versions to redirect to this target version.
+ */
+function computeVersionsToRedirect(publishedVersions) {
+    let [previousMajor, previousMinor, previousPatch] = [0, 0, 0];
+    const versionsToRedirect = {};
+
+    for (const publishedVersion of publishedVersions) {
+        const [major, minor, patch] = publishedVersion.split('.').map(Number);
+        // if minor or major changed, reset the previous patch version
+        (previousMinor !== minor || previousMajor !== major) && (previousPatch = -1);
+
+        const redirects = [];
+        for (let i = previousPatch + 1; i < patch; i++) {
+            redirects.push(`${major}.${minor}.${i}`);
+        }
+        redirects.length !== 0 && (versionsToRedirect[publishedVersion] = redirects);
+
+        previousPatch = patch;
+        previousMinor = minor;
+    }
+
+    return versionsToRedirect;
+}
+exports.computeVersionsToRedirect = computeVersionsToRedirect;
+
+/**
+ * Sorts an array of semantic version strings in ascending order.
+ */
+function sortSemVerAscending(versions) {
+    return versions.sort((a, b) => {
+        const [majorA, minorA, patchA] = a.split('.').map(Number);
+        const [majorB, minorB, patchB] = b.split('.').map(Number);
+
+        // compare major, then minor, then patch
+        if (majorA !== majorB) {
+            return majorA - majorB;
+        }
+        if (minorA !== minorB) {
+            return minorA - minorB;
+        }
+        if (patchA !== patchB) {
+            return patchA - patchB;
+        }
+
+        return 0; // They are equal
+    });
+}
+
+exports.sortSemVer = sortSemVerAscending;
+
 
 async function downloadRelease(downloadUrlTemplate, outputDirectory, releaseVersion, latest) {
     logger.debug(` - Release to deploy ${releaseVersion}`);
