@@ -25,7 +25,7 @@ exports.builder = (yargs) => {
         "s": {
             alias: "siteUrl",
             describe: "The url of the deployed site.",
-            default: 'https://api-documentation.bonitasoft.com',
+            default: 'https://api-documentation.ofelia.com',
             type: "string",
             nargs: 1,
         }, "l": {
