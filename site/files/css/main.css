@@ -21,7 +21,7 @@ p {
 }
 
 .header {
-    background-color:#19465f;
+    background-color:#5C1932;
     display: block;
     box-sizing: border-box;
     line-height: 21px;
@@ -36,7 +36,7 @@ p {
 .header > a {
     display: inline-block;
 }
-.bonita-logo {
+.ofelia-logo {
     box-sizing: border-box;
     display: block;
     max-width: 260px;
