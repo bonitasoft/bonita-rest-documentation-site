@@ -3,6 +3,13 @@
   "downloadUrlTemplate": "https://github.com/bonitasoft/bonita-openapi/releases/download/${releaseVersion}/bonita-openapi-${releaseVersion}.zip",
   "compatibility": [
     {
+      "bonita": "2027.1",
+      "apiVersions": [
+        "1.0.9"
+      ],
+      "bonitaSemver": "11.2.x"
+    },
+    {
       "bonita": "2026.2",
       "apiVersions": [
         "1.0.9"
